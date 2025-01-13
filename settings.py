@@ -10,7 +10,11 @@ class Settings(BaseSettings):
 
     DB_USER: str = 'sqlite'
     DB_PASSWORD: str = "sqlite"
-    DB_NAME: str = "db_recipes"
+    DB_NAME: str = "db_receipes_project"
+
+    GOOGLE_CLIENT_ID: str = "your-google-client-id"
+    GOOGLE_CLIENT_SECRET: str = "your-google-client-secret"
+    GOOGLE_REDIRECT_URI: str = "your-google-redirect-uri"
 
     SECRET_KEY: str = "secret_key-123"
 
