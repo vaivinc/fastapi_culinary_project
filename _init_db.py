@@ -1,12 +1,9 @@
 import asyncio
-
 from werkzeug.security import generate_password_hash
 
-from settings import Base, async_session, engine
+from models import *
 from schemas.user import UserType
-from models.user import User
-from models.categories import Categories
-from models.receipes import Receipes
+from settings import Base, async_session, engine
 
 
 async def create_bd():
@@ -27,10 +24,17 @@ async def insert_data():
                   password_hash=generate_password_hash("user"),
                   role=UserType.USER,
                   )
-        c1 = Categories(name="vegetarian"
-                        )
-        r1 = Receipes(title="soup",
-                      ingredients="potatoes, buckwheat groats, tomatoes, carrots, onion, vegetable oil, greens, salt, spice")
+        c1 = Category(name="vegetarian")
+        list_ingrs = "potatoes,buckwheat groats,tomatoes,carrots,onion,vegetable oil,greens,salt,spice".split(",")
+        ings = [Ingredient(name=i) for i in list_ingrs]
+
+        r1 = Recipe(title="soup",
+                    ingredients=ings,
+                    category=c1,
+                    author=u1)
+
+        sess.add_all([u1, u2, *ings, c1, r1])
+        await sess.commit()
 
 
 async def main():
