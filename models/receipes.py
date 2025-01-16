@@ -10,10 +10,11 @@ class Category(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(nullable=False)
 
-    recipes: Mapped[list["Recipe"]] = relationship("Recipe", back_populates="category")
+    recipes: Mapped[list["Recipe"]] = relationship("Recipe",
+                                                   back_populates="category",
+                                                   lazy="selectin")
 
 
-# Association table for Recipe-Ingredient many-to-many relationship
 recipe_ingredient_association = Table(
     "recipe_ingredient_association",
     Base.metadata,
@@ -29,14 +30,20 @@ class Recipe(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(nullable=False)
 
+    # description
+    # cooking_time
+
     author_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    author: Mapped["User"] = relationship("User", back_populates="recipes")
+    author: Mapped["User"] = relationship("User", back_populates="recipes", lazy="selectin")
 
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
-    category: Mapped["Category"] = relationship("Category", back_populates="recipes")
+    category: Mapped["Category"] = relationship("Category", back_populates="recipes", lazy="selectin")
 
     ingredients: Mapped[list["Ingredient"]] = relationship(
-        "Ingredient", secondary=recipe_ingredient_association, back_populates="recipes"
+        "Ingredient",
+        secondary="recipe_ingredient_association",
+        back_populates="recipes",
+        lazy="selectin"
     )
 
 
@@ -47,5 +54,6 @@ class Ingredient(Base):
     name: Mapped[str] = mapped_column(nullable=False)
 
     recipes: Mapped[list["Recipe"]] = relationship(
-        "Recipe", secondary=recipe_ingredient_association, back_populates="ingredients"
+        "Recipe", secondary="recipe_ingredient_association", back_populates="ingredients",
+        lazy="selectin"
     )

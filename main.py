@@ -2,7 +2,8 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.responses import RedirectResponse
 
-from routes import user_route, auth_route, receipe_route
+from routes import auth_route, receipe_route, user_route
+
 app = FastAPI(docs_url="/docs")
 
 

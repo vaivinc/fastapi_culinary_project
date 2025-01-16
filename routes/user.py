@@ -1,13 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from routes.auth import get_current_user
-from schemas.user import InputUserData, UserBase
+from werkzeug.security import generate_password_hash
 
 from models.user import User
+from routes.auth import get_current_user
+from schemas.user import InputUserData, UserBase
 from settings import get_session
-from werkzeug.security import generate_password_hash
 
 route = APIRouter()
 

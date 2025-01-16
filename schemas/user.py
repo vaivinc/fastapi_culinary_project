@@ -1,5 +1,4 @@
 import enum
-
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator

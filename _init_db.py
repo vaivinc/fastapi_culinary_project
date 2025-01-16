@@ -1,4 +1,6 @@
 import asyncio
+
+from sqlalchemy import select
 from werkzeug.security import generate_password_hash
 
 from models import *
@@ -25,15 +27,52 @@ async def insert_data():
                   role=UserType.USER,
                   )
         c1 = Category(name="vegetarian")
+        c2 = Category(name="meats")
+
         list_ingrs = "potatoes,buckwheat groats,tomatoes,carrots,onion,vegetable oil,greens,salt,spice".split(",")
         ings = [Ingredient(name=i) for i in list_ingrs]
-
         r1 = Recipe(title="soup",
                     ingredients=ings,
                     category=c1,
                     author=u1)
 
-        sess.add_all([u1, u2, *ings, c1, r1])
+        sess.add_all([u1, u2,  c1, c2, *ings, r1])
+
+        # ================================
+        ingredients_data = [
+            {"name": "meat", "quantity": "1 kg"},
+            {"name": "salt", "quantity": "5 g"},
+            {"name": "vine", "quantity": "1 cup"}
+        ]
+
+        r2 = Recipe(title="barbecue", category=c2, author=u1)
+        sess.add(r2)
+        await sess.flush()
+
+        for ingredient_data in ingredients_data:
+            # Проверяем наличие ингредиента в базе
+            ingredient = await sess.scalar(select(Ingredient).filter_by(name=ingredient_data["name"]))
+            if not ingredient:
+                # Если ингредиента нет, добавляем его
+                ingredient = Ingredient(name=ingredient_data["name"])
+                sess.add(ingredient)
+                await sess.flush()  # Генерируем ID для нового ингредиента
+
+            print(ingredient)
+
+            # Связываем ингредиент с рецептом
+            # r2.ingredients.append(ingredient)
+
+            # breakpoint()
+            # Обновляем связь в таблице recipe_ingredient_association
+            await sess.execute(
+                recipe_ingredient_association.insert().values(
+                    recipe_id=r2.id,
+                    ingredient_id=ingredient.id,
+                    quantity=ingredient_data["quantity"]
+                )
+            )
+        sess.add_all([r2])
         await sess.commit()
 
 

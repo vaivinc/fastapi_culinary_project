@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, HTTPBasic, HTTPBasicCredentials
+from fastapi.security import (HTTPBasic, HTTPBasicCredentials,
+                              OAuth2PasswordBearer, OAuth2PasswordRequestForm)
 from sqlalchemy import select
 from starlette import status
-
 from werkzeug.security import check_password_hash
 
 from models.user import User
 from schemas.user import UserType
-from settings import get_session, AsyncSession
+from settings import AsyncSession, get_session
 
 route = APIRouter()
 
